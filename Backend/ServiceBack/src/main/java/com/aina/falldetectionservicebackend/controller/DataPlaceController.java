@@ -46,8 +46,8 @@ public class DataPlaceController {
             myWebSocketHandler.broadcastMessage(alertMessage);
             return alertMessage;
         } catch (Exception e) {
-            e.printStackTrace();
-            return "Erreur interne : " + e.getMessage();
+            throw new RuntimeException(e);
+
         }
     }
 }

@@ -9,14 +9,19 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
+
+    private final MyWebSocketHandler myWebSocketHandler;
+
+    public WebSocketConfig(MyWebSocketHandler myWebSocketHandler) {
+        this.myWebSocketHandler = myWebSocketHandler;
+    }
+
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new MyWebSocketHandler(), "/ws")
+        registry.addHandler(myWebSocketHandler, "/ws")
                 .setAllowedOrigins("*"); // pour autoriser les connexions externes (ESP32, navigateur)
     }
 
-    @Bean
-    public MyWebSocketHandler myWebSocketHandler() {
-        return new MyWebSocketHandler();
-    }
+
 }

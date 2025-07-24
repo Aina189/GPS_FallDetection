@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { 
   View, 
   Text, 
@@ -21,6 +21,7 @@ import {
   Navigation
 } from 'lucide-react-native';
 import { clearLocationHistory } from '@/utils/storage';
+import React = require('react');
 
 export default function SettingsTab() {
   const handleClearHistory = () => {

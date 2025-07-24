@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { saveLocationToHistory } from '@/utils/storage';
 import { validateCoordinates } from '@/utils/locationUtils';
 import QuickPasteButton from '@/components/QuickPasteButton';
 import LocationCard from '@/components/LocationCard';
+import React = require('react');
 
 export default function LocationFinder() {
   const [latitude, setLatitude] = useState('');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -16,6 +16,7 @@ import LocationCard from '@/components/LocationCard';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { Platform } from 'react-native';
+import React = require('react');
 
 export default function HistoryTab() {
   const [locations, setLocations] = useState<LocationData[]>([]);

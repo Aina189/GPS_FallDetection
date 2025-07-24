@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform } from 'react-native';
 import { Copy, CircleCheck as CheckCircle, ExternalLink, MapPin, Navigation, Car, Smartphone } from 'lucide-react-native';
 import { LocationData } from '@/types/location';
 import { formatCoordinate, generateGoogleMapsUrl, generateDirectionsUrl, generateAppleMapsUrl, generateWazeUrl } from '@/utils/locationUtils';
 import * as Clipboard from 'expo-clipboard';
+import React = require('react');
 
 interface LocationCardProps {
   location: LocationData;
@@ -12,7 +13,7 @@ interface LocationCardProps {
 }
 
 export default function LocationCard({ location, currentLocation, showDirections = true }: LocationCardProps) {
-  const [copiedField, setCopiedField] = useState<string>('');
+  const [copiedField, setCopiedField] = React.useState<string>('');
 
   const handleCopy = async (text: string, type: string) => {
     try {

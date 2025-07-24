@@ -1,6 +1,7 @@
-import FloatingChatButton from '@/components/FloatingChatBot';
+import FloatingChatButton from '@/components/ChatBotCompo/FloatingChatBot';
 import { Tabs } from 'expo-router';
 import { MapPin, History, Settings } from 'lucide-react-native';
+import React = require('react');
 
 export default function TabLayout() {
   return (

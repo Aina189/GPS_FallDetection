@@ -5,7 +5,8 @@ import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useFonts } from 'expo-font';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { SplashScreen } from 'expo-router';
-import FloatingChatButton from '@/components/FloatingChatBot';
+import FloatingChatButton from '@/components/ChatBotCompo/FloatingChatBot';
+import React = require('react');
 
 SplashScreen.preventAutoHideAsync();
 

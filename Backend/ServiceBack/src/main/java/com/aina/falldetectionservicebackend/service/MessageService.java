@@ -32,10 +32,10 @@ public class MessageService {
     }
 
     public void sendFirstMsgOnConnected(){
-        HttpHeaders header = new HttpHeaders();
-        header.setBearerAuth("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");
-        header.add("HTTP-Referer","MyBotApp");
-        header.setContentType(MediaType.APPLICATION_JSON);
+//        HttpHeaders header = new HttpHeaders();
+//        header.setBearerAuth("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");
+//        header.add("HTTP-Referer","MyBotApp");
+//        header.setContentType(MediaType.APPLICATION_JSON);
 
         String message = "Durrant tout la conversation, TonRole: Tu es une intelligence artificielle intégrée dans un système backend. "
                 + "Ton rôle est d’analyser un message en langage naturel venant de l’utilisateur "
@@ -54,7 +54,7 @@ public class MessageService {
 
         String jsonMessage = """
     {
-    "model": "deepseek/deepseek-chat-v3-0324:free",
+    "model": "meta-llama/llama-3.1-405b-instruct:free",
     "messages": [
     {
       "role": "user",
@@ -64,55 +64,81 @@ public class MessageService {
     }
     """.formatted(message.replace("\"","\\\""));
 
-        String url = "https://openrouter.ai/api/v1/chat/completions";
+        //String url = "https://openrouter.ai/api/v1/chat/completions";
+        String url = "https://text.pollinations.ai/"+message;
+        //HttpEntity<String> request = new HttpEntity<>(jsonMessage, header);
+        //HttpEntity<String> request = new HttpEntity<>(jsonMessage);
 
-        HttpEntity<String> request = new HttpEntity<>(jsonMessage, header);
+        try {
+            String response = restTemplate.getForObject(url,String.class);
+//            JsonObject jsonData = JsonParser.parseString(response).getAsJsonObject();
+//            JsonArray choiceArray = jsonData.getAsJsonArray("choices");
+//            JsonObject firstElement = choiceArray.get(0).getAsJsonObject();
+//            JsonObject messageArray = firstElement.getAsJsonObject("message");
+            System.out.println(response);
+        } catch (Exception e) {
+            // Gérer les erreurs
+            System.err.println("Erreur lors de l'appel de l'API: " + e.getMessage());
 
-        String response = restTemplate.postForObject(url, request, String.class);
-        JsonObject jsonData = JsonParser.parseString(response).getAsJsonObject();
-        JsonArray choiceArray = jsonData.getAsJsonArray("choices");
-        JsonObject firstElement = choiceArray.get(0).getAsJsonObject();
-        JsonObject messageArray = firstElement.getAsJsonObject("message");
-        System.out.println(messageArray);
+        }
     }
 
     public String reciveMessage(String message) throws JsonProcessingException {
         HttpHeaders header = new HttpHeaders();
-        header.setBearerAuth("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");
-        header.add("HTTP-Referer","MyBotApp");
+//        header.setBearerAuth("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");
+//        header.add("HTTP-Referer","MyBotApp");
         header.setContentType(MediaType.APPLICATION_JSON);
 
         Object resultat = actionCompatible(0);
         ObjectMapper mapper = new ObjectMapper();
         String valueResult = mapper.writeValueAsString(resultat);
 
-        String messages = "Ton role: Assistante IA intégrer dans une application backend pour aider au question et service\n"
-                + "Voici les donner dont tu à besoin: "+ valueResult +"\n"
-                + "Si la demande de l'utilisateur n'est pas compris dans ce donné , dit que tu peut pas repondre"
-                + "Le message de l'utilisateur est : \"" + message + "\"";
+        String messages = """
+{
+  "data": %s,
+  "sujet": "Tu es une IA qui répond aux questions de l'utilisateur en utilisant les données ci-dessus si elles sont pertinentes. Sinon, réponds avec tes connaissances générales.",
+  "message": "%s"
+ 
+}
+""".formatted(valueResult, message);
 
-
+        String escapedMessage = messages
+                .replace("\\", "\\\\") // d'abord on échappe les antislash
+                .replace("\"", "\\\"") // ensuite les guillemets
+                .replace("\n", "\\n");
         String jsonMessage = """
-    {
-    "model": "deepseek/deepseek-chat-v3-0324:free",
-    "messages": [
+{
+  "messages": [
     {
       "role": "user",
       "content": "%s"
     }
-    ]
-    }
-    """.formatted(messages.replace("\"","\\\""));
+  ]
+}
+""".formatted(escapedMessage);
 
-        String url = "https://openrouter.ai/api/v1/chat/completions";
+//        String url = "https://openrouter.ai/api/v1/chat/completions";
+        String url = "https://text.pollinations.ai/openai/chat";
 
         HttpEntity<String> request = new HttpEntity<>(jsonMessage, header);
 
-        String response = restTemplate.postForObject(url, request, String.class);
-        JsonObject jsonData = JsonParser.parseString(response).getAsJsonObject();
-        JsonArray choiceArray = jsonData.getAsJsonArray("choices");
-        JsonObject firstElement = choiceArray.get(0).getAsJsonObject();
-        JsonObject messageArray = firstElement.getAsJsonObject("message");
+        try {
+            String response = restTemplate.postForObject(url,request,String.class);
+            System.out.println("Response is" + response);
+            JsonObject jsonData = JsonParser.parseString(response).getAsJsonObject();
+            JsonArray choiceArray = jsonData.getAsJsonArray("choices");
+            JsonObject firstElement = choiceArray.get(0).getAsJsonObject();
+            JsonObject messageArray = firstElement.getAsJsonObject("message");
+            String content = messageArray.get("content").getAsString();
+            return content;
+        }catch (Exception e){
+            return "Erreur de connexion";
+        }
+
+//        JsonObject jsonData = JsonParser.parseString(response).getAsJsonObject();
+//        JsonArray choiceArray = jsonData.getAsJsonArray("choices");
+//        JsonObject firstElement = choiceArray.get(0).getAsJsonObject();
+//        JsonObject messageArray = firstElement.getAsJsonObject("message");
 //        int value = messageArray.get("content").getAsInt();
 //        Object resultat = actionCompatible(value-1);
 //        ObjectMapper mapper = new ObjectMapper();
@@ -129,8 +155,8 @@ public class MessageService {
 //    ]
 //    }
 //    """.formatted(valueResult.replace("\"","\\\""));
-        String result = messageArray.get("content").getAsString();
-        return result;
+//        String result = messageArray.get("content").getAsString();
+//        return result;
 
     }
 
@@ -146,5 +172,4 @@ public class MessageService {
                 throw new IllegalArgumentException("Valeur invalide : " + value);
         }
     }
-
 }
